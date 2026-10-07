@@ -1,6 +1,6 @@
 # Expense Analyzer UI
 
-A standalone browser application for viewing and managing expenses through the REST API provided by the **Expense Analyzer** Java/Spring Boot project. This UI has its own dependencies, configuration, documentation, and Git repository.
+A browser application implemented with **React** for viewing and managing expenses through the REST API provided by the **Expense Analyzer** Java/Spring Boot project.
 
 ## Requirements
 
