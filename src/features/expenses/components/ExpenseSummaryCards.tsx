@@ -1,0 +1,12 @@
+import { Activity, CreditCard, Tag, TrendingUp, Wallet } from 'lucide-react'
+import type { Currency, Expense } from '../types/expense'
+import { formatMoney } from '../utils/formatters'
+interface Props { expenses: Expense[]; totalElements: number; loading: boolean; currentTotal: Array<[Currency, number]>; categoryCount: number; topCategory?: [string, number] }
+export default function ExpenseSummaryCards({ expenses, totalElements, loading, currentTotal, categoryCount, topCategory }: Props) {
+  return <section className="summary-grid" aria-label="Expense overview">
+    <article className="summary-card highlight"><div className="summary-top"><span className="summary-label">SPENDING ON THIS PAGE</span><span className="summary-icon violet"><Wallet size={18} /></span></div><div className="summary-value multi-total">{currentTotal.length ? currentTotal.map(([code, amount]) => <span key={code}>{formatMoney(amount, code)}</span>) : <span>{loading ? '—' : '0'}</span>}</div><div className="summary-foot"><span className="foot-pill"><Activity size={13} /> {expenses.length} records</span><span>current page only</span></div></article>
+    <article className="summary-card"><div className="summary-top"><span className="summary-label">ALL TRANSACTIONS</span><span className="summary-icon mint"><CreditCard size={18} /></span></div><div className="summary-value">{loading ? '—' : totalElements.toLocaleString()}</div><div className="summary-foot"><span className="subtle-dot" />Matching your filters</div></article>
+    <article className="summary-card"><div className="summary-top"><span className="summary-label">CATEGORIES</span><span className="summary-icon peach"><Tag size={18} /></span></div><div className="summary-value">{loading ? '—' : categoryCount}</div><div className="summary-foot">On this page of transactions</div></article>
+    <article className="summary-card"><div className="summary-top"><span className="summary-label">MOST FREQUENT</span><span className="summary-icon blue"><TrendingUp size={18} /></span></div><div className="summary-value category-value">{loading ? '—' : (topCategory?.[0] ?? '—')}</div><div className="summary-foot">{topCategory ? topCategory[1] + ' transactions on this page' : 'No category activity yet'}</div></article>
+  </section>
+}

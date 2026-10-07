@@ -1,0 +1,1 @@
+export const API_ORIGIN = __API_ORIGIN__
