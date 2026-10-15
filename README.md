@@ -23,12 +23,12 @@ Open the address printed by Vite. The default UI address is `http://127.0.0.1:51
 
 Copy `.env.example` to `.env` and adjust these values as needed:
 
-| Variable | Purpose | Default |
-|---|---|---|
-| `UI_HOST` | Address Vite binds to | `127.0.0.1` |
-| `UI_PORT` | Vite development server port | `5173` |
+| Variable   | Purpose                                            | Default     |
+| ---------- | -------------------------------------------------- | ----------- |
+| `UI_HOST`  | Address Vite binds to                              | `127.0.0.1` |
+| `UI_PORT`  | Vite development server port                       | `5173`      |
 | `API_HOST` | Hostname or IP address of the Expense Analyzer API | `localhost` |
-| `API_PORT` | Port of the Expense Analyzer API | `8087` |
+| `API_PORT` | Port of the Expense Analyzer API                   | `8087`      |
 
 Vite proxies `/api` requests to the configured API address. The API documentation link also uses that address. Do not commit `.env`; `.env.example` contains safe defaults.
 
@@ -55,6 +55,7 @@ npm run preview
 ```
 
 The development proxy is a Vite dev-server feature. A production deployment must configure its web server or gateway to route `/api` requests to the API, or provide an equivalent same-origin API arrangement.
+
 ## Source structure
 
     src/
