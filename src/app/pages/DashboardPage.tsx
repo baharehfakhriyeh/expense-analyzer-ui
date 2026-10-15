@@ -63,6 +63,7 @@ export default function DashboardPage() {
     setModal(expense);
   }
   async function saveExpense(nextDraft: ExpenseDraft) {
+    const isCreating = modal === "new";
     setSaving(true);
     try {
       const payload = {
@@ -71,10 +72,11 @@ export default function DashboardPage() {
         amount: Number(nextDraft.amount),
         notes: nextDraft.notes?.trim() || null,
       };
-      if (modal === "new") await createExpense(payload);
+      if (isCreating) await createExpense(payload);
       else if (modal) await updateExpense(modal.id, payload);
-      setModal(null);
-      setNotice(modal === "new" ? "Expense added" : "Expense updated");
+      if (isCreating) setDraft(emptyExpenseDraft());
+      else setModal(null);
+      setNotice(isCreating ? "Expense added" : "Expense updated");
       await refresh();
     } catch (cause) {
       setError(

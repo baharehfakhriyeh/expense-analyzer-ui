@@ -80,6 +80,14 @@ describe("DashboardPage expense workflows", () => {
 
     expect(await screen.findByText("Coffee")).toBeInTheDocument();
     expect(await screen.findByText("Expense added")).toBeInTheDocument();
+    expect(
+      screen.getByRole("dialog", { name: "Add an expense" }),
+    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Description")).toHaveValue("");
+    expect(screen.getByLabelText("Amount")).toHaveValue(null);
+    expect(screen.getByLabelText("Category")).toHaveValue("");
+    expect(screen.getByLabelText("Currency")).toHaveValue("AMD");
+    expect(screen.getByLabelText("Paid by")).toHaveValue("1");
   });
 
   it("updates an expense from the table", async () => {
