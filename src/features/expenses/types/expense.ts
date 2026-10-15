@@ -1,7 +1,7 @@
 export type Currency = "AMD" | "USD" | "EUR" | "IRR";
 export interface Expense {
   id: number;
-  description: string;
+  description: string | null;
   amount: number;
   currency: Currency;
   expenseDate: string;
@@ -28,6 +28,11 @@ export interface ExpenseFilters {
   category: string;
   paidBy: string;
 }
-export type ExpenseDraft = Omit<Expense, "id" | "createdAt" | "updatedAt">;
+export type ExpenseDraft = Omit<
+  Expense,
+  "id" | "createdAt" | "updatedAt" | "description"
+> & {
+  description?: string | null;
+};
 export type ExpenseSort = "expenseDate,desc" | "amount,desc";
 export type ExpenseFilterField = keyof ExpenseFilters;

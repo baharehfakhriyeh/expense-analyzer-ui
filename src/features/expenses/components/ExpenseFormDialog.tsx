@@ -50,7 +50,7 @@ export default function ExpenseFormDialog({
             <h2 id="modal-title">
               {mode === "create" ? "Add an expense" : "Edit expense"}
             </h2>
-            <p>It’s the little details that add up to a clearer picture.</p>
+            <p>It's the little details that add up to a clearer picture.</p>
           </div>
           <button
             className="icon-button"
@@ -61,17 +61,27 @@ export default function ExpenseFormDialog({
           </button>
         </div>
         <form onSubmit={handleSubmit}>
-          <label className="form-field full-field">
-            <span>Description</span>
-            <input
-              autoFocus
-              required
-              maxLength={200}
-              placeholder="e.g. Weekly groceries"
-              value={draft.description}
-              onChange={(event) => update("description", event.target.value)}
-            />
-          </label>
+          <div className="form-grid">
+            <label className="form-field">
+              <span>Date</span>
+              <input
+                required
+                type="date"
+                value={draft.expenseDate}
+                onChange={(event) => update("expenseDate", event.target.value)}
+              />
+            </label>
+            <label className="form-field">
+              <span>Category</span>
+              <input
+                required
+                maxLength={80}
+                placeholder="e.g. Food"
+                value={draft.category}
+                onChange={(event) => update("category", event.target.value)}
+              />
+            </label>
+          </div>
           <div className="form-grid">
             <label className="form-field">
               <span>Amount</span>
@@ -102,27 +112,6 @@ export default function ExpenseFormDialog({
               </select>
             </label>
           </div>
-          <div className="form-grid">
-            <label className="form-field">
-              <span>Date</span>
-              <input
-                required
-                type="date"
-                value={draft.expenseDate}
-                onChange={(event) => update("expenseDate", event.target.value)}
-              />
-            </label>
-            <label className="form-field">
-              <span>Category</span>
-              <input
-                required
-                maxLength={80}
-                placeholder="e.g. Food"
-                value={draft.category}
-                onChange={(event) => update("category", event.target.value)}
-              />
-            </label>
-          </div>
           <label className="form-field full-field">
             <span>Paid by</span>
             <select
@@ -136,6 +125,16 @@ export default function ExpenseFormDialog({
                 </option>
               ))}
             </select>
+          </label>
+          <label className="form-field full-field">
+            <span>Description</span>
+            <input
+              autoFocus
+              maxLength={200}
+              placeholder="e.g. Weekly groceries"
+              value={draft.description ?? ""}
+              onChange={(event) => update("description", event.target.value)}
+            />
           </label>
           <label className="form-field full-field">
             <span>

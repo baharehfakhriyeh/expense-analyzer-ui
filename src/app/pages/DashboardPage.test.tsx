@@ -23,6 +23,7 @@ function mockExpenseApi(seed: Expense[] = [sampleExpense]) {
       const now = "2026-10-15T10:00:00Z";
       const created: Expense = {
         ...draft,
+        description: draft.description ?? null,
         id: nextId++,
         createdAt: now,
         updatedAt: now,
@@ -41,6 +42,7 @@ function mockExpenseApi(seed: Expense[] = [sampleExpense]) {
         );
       const updated: Expense = {
         ...draft,
+        description: draft.description ?? null,
         id,
         createdAt: existing.createdAt,
         updatedAt: "2026-10-15T10:00:00Z",

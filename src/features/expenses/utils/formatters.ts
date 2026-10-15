@@ -3,7 +3,8 @@ import { payers } from "../constants/expenseOptions";
 export function payerName(id: number) {
   return payers.find((person) => person.id === id)?.text ?? "User " + id;
 }
-export function initials(text: string) {
+export function initials(text: string | null | undefined) {
+  if (!text?.trim()) return "?";
   return text
     .split(/\s+/)
     .slice(0, 2)

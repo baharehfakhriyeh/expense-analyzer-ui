@@ -120,7 +120,7 @@ export default function ExpenseTable({
                         {initials(expense.description)}
                       </span>
                       <span>
-                        <strong>{expense.description}</strong>
+                        <strong>{expense.description || "No description"}</strong>
                         <small>#{expense.id.toString().padStart(4, "0")}</small>
                       </span>
                     </div>
@@ -152,14 +152,14 @@ export default function ExpenseTable({
                       <button
                         className="row-icon"
                         onClick={() => onEdit(expense)}
-                        aria-label={"Edit " + expense.description}
+                        aria-label={"Edit " + (expense.description || "expense")}
                       >
                         <Pencil size={15} />
                       </button>
                       <button
                         className="row-icon danger-icon"
                         onClick={() => onDelete(expense)}
-                        aria-label={"Delete " + expense.description}
+                        aria-label={"Delete " + (expense.description || "expense")}
                       >
                         <Trash2 size={15} />
                       </button>

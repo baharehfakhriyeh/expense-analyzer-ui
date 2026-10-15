@@ -67,6 +67,7 @@ export default function DashboardPage() {
     try {
       const payload = {
         ...nextDraft,
+        description: nextDraft.description?.trim() || null,
         amount: Number(nextDraft.amount),
         notes: nextDraft.notes?.trim() || null,
       };
@@ -86,7 +87,7 @@ export default function DashboardPage() {
   async function removeExpense(expense: Expense) {
     if (
       !window.confirm(
-        "Delete “" + expense.description + "”? This cannot be undone.",
+        "Delete “" + (expense.description || "expense") + "”? This cannot be undone.",
       )
     )
       return;

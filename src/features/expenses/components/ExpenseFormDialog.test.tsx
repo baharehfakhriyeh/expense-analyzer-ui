@@ -59,7 +59,7 @@ describe("ExpenseFormDialog", () => {
 
   it("marks required fields as required", () => {
     render(<FormHarness onSubmit={vi.fn()} />);
-    expect(screen.getByLabelText("Description")).toBeRequired();
+    expect(screen.getByLabelText("Description")).not.toBeRequired();
     expect(screen.getByLabelText("Amount")).toBeRequired();
     expect(screen.getByLabelText("Date")).toBeRequired();
     expect(screen.getByLabelText("Category")).toBeRequired();
