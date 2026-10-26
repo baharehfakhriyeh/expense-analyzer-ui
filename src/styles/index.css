@@ -362,11 +362,184 @@ button:disabled {
   background: #f8f7ff;
   border-color: #dcd8f8;
 }
+.category-create-panel,
+.category-list-panel {
+  padding: 20px;
+  margin-bottom: 16px;
+}
+.category-form-heading h2,
+.category-list-heading h2 {
+  margin: 0;
+  color: #353444;
+  font-size: 14px;
+}
+.category-form-heading p,
+.category-list-heading p {
+  color: #91909e;
+  font-size: 11px;
+  margin: 5px 0 0;
+}
+.category-form-fields {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  margin-top: 17px;
+}
+.category-form-fields .form-field {
+  flex: 1;
+}
+.category-form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.category-list-heading {
+  margin-bottom: 16px;
+}
+.category-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+}
+.category-list-item {
+  min-height: 48px;
+  padding: 0 12px;
+  border: 1px solid #f0eff3;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #4a4959;
+  font-size: 12px;
+}
+.category-list-edit-item {
+  padding: 12px;
+  border: 1px solid #dcd8f8;
+  border-radius: 9px;
+  background: #fcfbff;
+}
+.category-list-edit-item .category-form-heading {
+  display: none;
+}
+.category-list-edit-item .category-form-fields {
+  margin-top: 0;
+}
+.category-list-edit-item .category-form-actions {
+  gap: 8px;
+}
+.category-list-name {
+  flex: 1;
+}
+.category-list-actions {
+  display: flex;
+  gap: 6px;
+  margin-left: auto;
+}
+.category-action-button {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+}
+.category-action-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+.category-delete-button {
+  color: #bd5b63;
+}
+.category-delete-button:hover {
+  background: #fff4f4;
+  border-color: #f1d6d8;
+}
+.category-list-icon {
+  color: #7163dc;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  background: #f1efff;
+}
+.category-list-message {
+  color: #91909e;
+  font-size: 12px;
+  padding: 14px 0;
+  margin: 0;
+}
 .summary-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 13px;
   margin-bottom: 15px;
+}
+.date-range-panel {
+  margin-bottom: 16px;
+  padding: 15px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+}
+.date-range-copy {
+  display: grid;
+  gap: 4px;
+}
+.date-range-copy strong {
+  color: #353444;
+  font-size: 12px;
+}
+.date-range-copy span {
+  color: #91909e;
+  font-size: 10px;
+}
+.date-range-fields {
+  display: flex;
+  align-items: end;
+  gap: 10px;
+}
+.date-range-field {
+  display: grid;
+  gap: 5px;
+  color: #777687;
+  font-size: 10px;
+}
+.date-range-field input {
+  height: 34px;
+  padding: 0 8px;
+  border: 1px solid #e8e7ed;
+  border-radius: 8px;
+  color: #4a4959;
+  background: #fff;
+  font: inherit;
+}
+.date-range-reset {
+  height: 34px;
+  padding: 0 8px;
+}
+.summary-dashboards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 13px;
+  margin-bottom: 15px;
+}
+.summary-overall-card {
+  grid-column: span 2;
+}
+.summary-currency-totals {
+  display: grid;
+  gap: 5px;
+  color: #29283a;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  margin: 14px 0;
+}
+.payer-summary-card .summary-currency-totals {
+  font-size: 18px;
+}
+.summary-currency-totals > span:only-child {
+  min-height: 25px;
 }
 .summary-card,
 .panel {
@@ -1231,6 +1404,23 @@ tbody tr:last-child td {
   }
 }
 @media (max-width: 760px) {
+  .date-range-panel {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .date-range-fields {
+    flex-wrap: wrap;
+  }
+  .summary-overall-card {
+    grid-column: span 1;
+  }
+  .category-form-fields {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .category-form-actions {
+    justify-content: flex-start;
+  }
   .sidebar {
     width: 62px;
     padding: 17px 9px;

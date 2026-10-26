@@ -3,34 +3,32 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ExpenseFilters from "./ExpenseFilters";
 import type { ExpenseFilters as Filters } from "../types/expense";
+import type { Category } from "../../categories/types/category";
 
-const initialFilters: Filters = { from: "", to: "", category: "", paidBy: "" };
+const categories: Category[] = [{ id: 1, name: "food" }, { id: 2, name: "travel" }];
+const initialFilters: Filters = { from: "", to: "", categoryId: "", paidBy: "" };
 
 describe("ExpenseFilters", () => {
-  it("forwards category, date, and payer changes", async () => {
+  it("forwards category ID and payer changes", async () => {
     const user = userEvent.setup();
     const onChange = vi.fn();
     render(
       <ExpenseFilters
         filters={initialFilters}
+        categories={categories}
         onChange={onChange}
         onReset={vi.fn()}
       />,
     );
 
-    await user.type(
-      screen.getByRole("textbox", { name: "Filter category" }),
-      "Food",
-    );
-    await user.type(screen.getByLabelText("From date"), "2026-10-01");
+    await user.selectOptions(screen.getByLabelText("Filter by category"), "2");
     await user.selectOptions(
       screen.getByRole("combobox", { name: "Filter by payer" }),
       "2",
     );
 
     expect(onChange).toHaveBeenLastCalledWith("paidBy", "2");
-    expect(onChange).toHaveBeenCalledWith("category", "F");
-    expect(onChange).toHaveBeenCalledWith("from", "2026-10-01");
+    expect(onChange).toHaveBeenCalledWith("categoryId", "2");
     expect(onChange).toHaveBeenCalledWith("paidBy", "2");
   });
 
@@ -42,9 +40,10 @@ describe("ExpenseFilters", () => {
         filters={{
           from: "2026-10-01",
           to: "2026-10-31",
-          category: "Food",
+          categoryId: "1",
           paidBy: "1",
         }}
+        categories={categories}
         onChange={vi.fn()}
         onReset={onReset}
       />,

@@ -2,9 +2,12 @@ import type { FormEvent } from "react";
 import { Check, LoaderCircle, Sparkles, X } from "lucide-react";
 import { currencies, payers } from "../constants/expenseOptions";
 import type { Currency, ExpenseDraft } from "../types/expense";
+import type { Category } from "../../categories/types/category";
 interface Props {
   mode: "create" | "edit";
   draft: ExpenseDraft;
+  categories: Category[];
+  categoriesLoading: boolean;
   saving: boolean;
   onChange: (draft: ExpenseDraft) => void;
   onClose: () => void;
@@ -13,11 +16,17 @@ interface Props {
 export default function ExpenseFormDialog({
   mode,
   draft,
+  categories,
+  categoriesLoading,
   saving,
   onChange,
   onClose,
   onSubmit,
 }: Props) {
+  const sortedCategories = [...categories].sort((left, right) =>
+    left.name.localeCompare(right.name),
+  );
+
   function update<K extends keyof ExpenseDraft>(
     field: K,
     value: ExpenseDraft[K],
@@ -73,13 +82,29 @@ export default function ExpenseFormDialog({
             </label>
             <label className="form-field">
               <span>Category</span>
-              <input
+              <select
                 required
-                maxLength={80}
-                placeholder="e.g. Food"
-                value={draft.category}
-                onChange={(event) => update("category", event.target.value)}
-              />
+                aria-label="Category"
+                value={draft.categoryId || ""}
+                disabled={categoriesLoading || categories.length === 0}
+                onChange={(event) => update("categoryId", Number(event.target.value))}
+              >
+                <option value="" disabled>
+                  {categoriesLoading
+                    ? "Loading categories…"
+                    : categories.length === 0
+                      ? "No categories available"
+                      : "Choose a category"}
+                </option>
+                {sortedCategories.map((category) => (
+                  <option key={category.id} value={category.id}>
+                    {category.name}
+                  </option>
+                ))}
+              </select>
+              {!categoriesLoading && categories.length === 0 && (
+                <small>Add a category from the Categories page before saving an expense.</small>
+              )}
             </label>
           </div>
           <div className="form-grid">

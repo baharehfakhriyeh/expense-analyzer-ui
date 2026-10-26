@@ -10,7 +10,8 @@ export const sampleExpense: Expense = {
   amount: 42.75,
   currency: "USD",
   expenseDate: "2026-10-04",
-  category: "Food",
+  categoryId: 1,
+  categoryName: "food",
   notes: "Weekly shop",
   paidBy: 1,
   createdAt: "2026-10-04T12:30:45Z",
@@ -22,7 +23,7 @@ export const sampleDraft: ExpenseDraft = {
   amount: 42.75,
   currency: "USD",
   expenseDate: "2026-10-04",
-  category: "Food",
+  categoryId: 1,
   notes: "Weekly shop",
   paidBy: 1,
 };

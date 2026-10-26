@@ -12,7 +12,7 @@ describe("getExpenseMetrics", () => {
         id: 8,
         description: "Lunch",
         amount: 18.5,
-        category: "Food",
+        categoryName: "food",
       },
       {
         ...sampleExpense,
@@ -20,14 +20,14 @@ describe("getExpenseMetrics", () => {
         description: "Taxi",
         amount: 4000,
         currency: "AMD",
-        category: "Transport",
+        categoryName: "transport",
       },
     ];
 
     expect(getExpenseMetrics(expenses)).toEqual({
       categoryCounts: [
-        ["Food", 2],
-        ["Transport", 1],
+        ["food", 2],
+        ["transport", 1],
       ],
       currentTotal: [
         ["USD", 61.25],
@@ -47,7 +47,7 @@ describe("getExpenseMetrics", () => {
     const expenses = Array.from({ length: 6 }, (_, index) => ({
       ...sampleExpense,
       id: index + 1,
-      category: "Category " + index,
+      categoryName: "Category " + index,
     }));
     expect(getExpenseMetrics(expenses).categoryCounts).toHaveLength(5);
   });

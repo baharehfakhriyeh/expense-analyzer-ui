@@ -8,7 +8,7 @@ import type {
 const initialFilters: ExpenseFilters = {
   from: "",
   to: "",
-  category: "",
+  categoryId: "",
   paidBy: "",
 };
 export function useExpenses() {
@@ -19,6 +19,12 @@ export function useExpenses() {
   const [error, setError] = useState("");
   const [sort, setSort] = useState<ExpenseSort>("expenseDate,desc");
   const refresh = useCallback(async () => {
+    if (filters.from && filters.to && filters.from > filters.to) {
+      setPage(null);
+      setError("From date must be on or before To date.");
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     setError("");
     try {

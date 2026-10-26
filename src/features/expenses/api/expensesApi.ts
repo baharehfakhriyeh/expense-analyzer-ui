@@ -4,6 +4,7 @@ import type {
   ExpenseDraft,
   ExpenseFilters,
   ExpensePage,
+  ExpenseSummary,
   ExpenseSort,
 } from "../types/expense";
 export async function listExpenses(
@@ -11,12 +12,21 @@ export async function listExpenses(
   page: number,
   sort: ExpenseSort = "expenseDate,desc",
 ) {
-  const params = new URLSearchParams({ page: String(page), size: "20", sort });
+  const params = new URLSearchParams({ page: String(page), size: "20" });
+  params.append("sort", sort);
+  params.append("sort", "createdAt,desc");
   if (filters.from) params.set("from", filters.from);
   if (filters.to) params.set("to", filters.to);
-  if (filters.category.trim()) params.set("category", filters.category.trim());
+  if (filters.categoryId) params.set("categoryId", filters.categoryId);
   if (filters.paidBy) params.set("paidBy", filters.paidBy);
   return httpRequest<ExpensePage>("/api/v1/expenses?" + params);
+}
+export async function getExpenseSummary(from: string, to: string) {
+  const params = new URLSearchParams();
+  if (from) params.set("from", from);
+  if (to) params.set("to", to);
+  const query = params.size ? "?" + params.toString() : "";
+  return httpRequest<ExpenseSummary>("/api/v1/expenses/summary" + query);
 }
 export const createExpense = (draft: ExpenseDraft) =>
   httpRequest<Expense>("/api/v1/expenses", {

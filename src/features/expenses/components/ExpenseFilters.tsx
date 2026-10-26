@@ -1,45 +1,28 @@
-import { CalendarDays, Search } from "lucide-react";
 import type {
   ExpenseFilterField,
   ExpenseFilters as Filters,
 } from "../types/expense";
+import type { Category } from "../../categories/types/category";
 interface Props {
   filters: Filters;
+  categories: Category[];
   onChange: (field: ExpenseFilterField, value: string) => void;
   onReset: () => void;
 }
-export default function ExpenseFilters({ filters, onChange, onReset }: Props) {
+export default function ExpenseFilters({ filters, categories, onChange, onReset }: Props) {
   return (
     <div className="filters" id="transaction-filters">
-      <div className="filter-search">
-        <Search size={16} />
-        <input
-          aria-label="Filter category"
-          placeholder="Filter by category…"
-          value={filters.category}
-          onChange={(event) => onChange("category", event.target.value)}
-        />
-      </div>
-      <label className="date-filter">
-        <CalendarDays size={15} />
-        <span>From</span>
-        <input
-          aria-label="From date"
-          type="date"
-          value={filters.from}
-          onChange={(event) => onChange("from", event.target.value)}
-        />
-      </label>
-      <label className="date-filter">
-        <CalendarDays size={15} />
-        <span>To</span>
-        <input
-          aria-label="To date"
-          type="date"
-          value={filters.to}
-          onChange={(event) => onChange("to", event.target.value)}
-        />
-      </label>
+      <select
+        className="payer-filter"
+        aria-label="Filter by category"
+        value={filters.categoryId}
+        onChange={(event) => onChange("categoryId", event.target.value)}
+      >
+        <option value="">All categories</option>
+        {categories.map((category) => (
+          <option key={category.id} value={category.id}>{category.name}</option>
+        ))}
+      </select>
       <select
         className="payer-filter"
         aria-label="Filter by payer"

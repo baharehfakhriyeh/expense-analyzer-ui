@@ -26,7 +26,7 @@ describe("expense API client", () => {
     );
 
     await listExpenses(
-      { from: "2026-10-01", to: "2026-10-31", category: " Food ", paidBy: "2" },
+      { from: "2026-10-01", to: "2026-10-31", categoryId: "12", paidBy: "2" },
       3,
       "amount,desc",
     );
@@ -34,11 +34,11 @@ describe("expense API client", () => {
     const params = new URL(requestedUrl).searchParams;
     expect(params.get("from")).toBe("2026-10-01");
     expect(params.get("to")).toBe("2026-10-31");
-    expect(params.get("category")).toBe("Food");
+    expect(params.get("categoryId")).toBe("12");
     expect(params.get("paidBy")).toBe("2");
     expect(params.get("page")).toBe("3");
     expect(params.get("size")).toBe("20");
-    expect(params.get("sort")).toBe("amount,desc");
+    expect(params.getAll("sort")).toEqual(["amount,desc", "createdAt,desc"]);
   });
 
   it("posts an expense and returns the created record", async () => {

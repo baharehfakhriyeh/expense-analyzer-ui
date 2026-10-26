@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { Plus, Sparkles } from "lucide-react";
 import DashboardLayout from "../layouts/DashboardLayout";
 import ExpenseFilters from "../../features/expenses/components/ExpenseFilters";
@@ -21,6 +21,9 @@ import CategorySnapshotCard from "../../features/dashboard/components/CategorySn
 import QuickActionsCard from "../../features/dashboard/components/QuickActionsCard";
 import ErrorBanner from "../../shared/components/feedback/ErrorBanner";
 import Toast from "../../shared/components/feedback/Toast";
+import { listCategories } from "../../features/categories/api/categoriesApi";
+import type { Category } from "../../features/categories/types/category";
+import { useExpenseSummary } from "../../features/expenses/hooks/useExpenseSummary";
 
 export default function DashboardPage() {
   const {
@@ -37,12 +40,38 @@ export default function DashboardPage() {
     setSort,
     refresh,
   } = useExpenses();
+  const {
+    summary,
+    loading: summaryLoading,
+    error: summaryError,
+    refresh: refreshSummary,
+  } = useExpenseSummary(filters.from, filters.to);
   const [modal, setModal] = useState<Expense | "new" | null>(null);
   const [draft, setDraft] = useState<ExpenseDraft>(emptyExpenseDraft());
   const [saving, setSaving] = useState(false);
   const [notice, setNotice] = useState("");
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [categoriesLoading, setCategoriesLoading] = useState(true);
+  const [categoriesError, setCategoriesError] = useState("");
   const dismissNotice = useCallback(() => setNotice(""), []);
-  const { categoryCounts, currentTotal } = useMemo(
+
+  useEffect(() => {
+    async function loadCategories() {
+      try {
+        setCategoriesError("");
+        setCategories(await listCategories());
+      } catch (cause) {
+        setCategoriesError(
+          cause instanceof Error ? cause.message : "Could not load categories",
+        );
+      } finally {
+        setCategoriesLoading(false);
+      }
+    }
+
+    void loadCategories();
+  }, []);
+  const { categoryCounts } = useMemo(
     () => getExpenseMetrics(expenses),
     [expenses],
   );
@@ -56,7 +85,7 @@ export default function DashboardPage() {
       amount: expense.amount,
       currency: expense.currency,
       expenseDate: expense.expenseDate,
-      category: expense.category,
+      categoryId: expense.categoryId,
       notes: expense.notes ?? "",
       paidBy: expense.paidBy,
     });
@@ -66,18 +95,27 @@ export default function DashboardPage() {
     const isCreating = modal === "new";
     setSaving(true);
     try {
+      const selectedCategoryName = categories.find(
+        (category) => category.id === nextDraft.categoryId,
+      )?.name;
       const payload = {
         ...nextDraft,
-        description: nextDraft.description?.trim() || null,
+        description: nextDraft.description?.trim() || selectedCategoryName || null,
         amount: Number(nextDraft.amount),
         notes: nextDraft.notes?.trim() || null,
       };
       if (isCreating) await createExpense(payload);
       else if (modal) await updateExpense(modal.id, payload);
-      if (isCreating) setDraft(emptyExpenseDraft());
+      if (isCreating) {
+        setDraft({
+          ...emptyExpenseDraft(),
+          expenseDate: nextDraft.expenseDate,
+          paidBy: nextDraft.paidBy,
+        });
+      }
       else setModal(null);
       setNotice(isCreating ? "Expense added" : "Expense updated");
-      await refresh();
+      await Promise.all([refresh(), refreshSummary()]);
     } catch (cause) {
       setError(
         cause instanceof Error ? cause.message : "Could not save expense",
@@ -98,6 +136,7 @@ export default function DashboardPage() {
       setNotice("Expense deleted");
       if (expenses.length === 1 && pageIndex > 0) setPageIndex(pageIndex - 1);
       else await refresh();
+      await refreshSummary();
     } catch (cause) {
       setError(
         cause instanceof Error ? cause.message : "Could not delete expense",
@@ -124,16 +163,71 @@ export default function DashboardPage() {
             <Plus size={17} /> Add expense
           </button>
         </div>
+        <section className="panel date-range-panel" aria-label="Dashboard date range">
+          <div className="date-range-copy">
+            <strong>Expense totals</strong>
+            <span>Choose a date range; leave both dates blank for all time.</span>
+          </div>
+          <div className="date-range-fields">
+            <label className="date-range-field">
+              <span>From</span>
+              <input
+                aria-label="Dashboard from date"
+                type="date"
+                max={filters.to || undefined}
+                value={filters.from}
+                onChange={(event) => {
+                  setFilters({ ...filters, from: event.target.value });
+                  setPageIndex(0);
+                }}
+              />
+            </label>
+            <label className="date-range-field">
+              <span>To</span>
+              <input
+                aria-label="Dashboard to date"
+                type="date"
+                min={filters.from || undefined}
+                value={filters.to}
+                onChange={(event) => {
+                  setFilters({ ...filters, to: event.target.value });
+                  setPageIndex(0);
+                }}
+              />
+            </label>
+            {(filters.from || filters.to) && (
+              <button
+                className="filter-reset date-range-reset"
+                type="button"
+                onClick={() => {
+                  setFilters({ ...filters, from: "", to: "" });
+                  setPageIndex(0);
+                }}
+              >
+                Clear dates
+              </button>
+            )}
+          </div>
+        </section>
         {error && (
           <ErrorBanner message={error} onDismiss={() => setError("")} />
         )}
+        {summaryError && summaryError !== error && (
+          <ErrorBanner
+            message={summaryError}
+            onDismiss={() => void refreshSummary()}
+          />
+        )}
+        {categoriesError && (
+          <ErrorBanner
+            message={categoriesError}
+            onDismiss={() => setCategoriesError("")}
+          />
+        )}
         <ExpenseSummaryCards
-          expenses={expenses}
-          totalElements={page?.totalElements ?? 0}
-          loading={loading}
-          currentTotal={currentTotal}
-          categoryCount={categoryCounts.length}
-          topCategory={categoryCounts[0]}
+          summary={summary}
+          loading={summaryLoading}
+          hasError={Boolean(summaryError)}
         />
         <section className="insights-grid">
           <CategorySnapshotCard
@@ -165,12 +259,13 @@ export default function DashboardPage() {
           </div>
           <ExpenseFilters
             filters={filters}
+            categories={categories}
             onChange={(field, value) => {
               setFilters({ ...filters, [field]: value });
               setPageIndex(0);
             }}
             onReset={() => {
-              setFilters({ from: "", to: "", category: "", paidBy: "" });
+              setFilters({ from: "", to: "", categoryId: "", paidBy: "" });
               setPageIndex(0);
             }}
           />
@@ -202,6 +297,8 @@ export default function DashboardPage() {
         <ExpenseFormDialog
           mode={modal === "new" ? "create" : "edit"}
           draft={draft}
+          categories={categories}
+          categoriesLoading={categoriesLoading}
           saving={saving}
           onChange={setDraft}
           onClose={() => setModal(null)}

@@ -68,7 +68,7 @@ describe("ExpenseTable", () => {
     );
 
     expect(screen.getByText("Weekly groceries")).toBeInTheDocument();
-    expect(screen.getByText("Food")).toBeInTheDocument();
+    expect(screen.getByText("food")).toBeInTheDocument();
     await user.click(
       screen.getByRole("button", { name: "Edit Weekly groceries" }),
     );

@@ -11,6 +11,7 @@ import type {
 } from "../../features/expenses/types/expense";
 
 const endpoint = "http://localhost/api/v1/expenses";
+const categoriesEndpoint = "http://localhost/api/v1/categories";
 
 function mockExpenseApi(seed: Expense[] = [sampleExpense]) {
   let records = [...seed];
@@ -18,12 +19,42 @@ function mockExpenseApi(seed: Expense[] = [sampleExpense]) {
 
   server.use(
     http.get(endpoint, () => HttpResponse.json(expensePage(records))),
+    http.get(endpoint + "/summary", () => {
+      const byCurrency = new Map<string, { amount: number; expenseCount: number }>();
+      const byPayer = new Map<number, Map<string, { amount: number; expenseCount: number }>>();
+      for (const expense of records) {
+        const total = byCurrency.get(expense.currency) ?? { amount: 0, expenseCount: 0 };
+        total.amount += expense.amount;
+        total.expenseCount += 1;
+        byCurrency.set(expense.currency, total);
+        const payerTotals = byPayer.get(expense.paidBy) ?? new Map();
+        const payerTotal = payerTotals.get(expense.currency) ?? { amount: 0, expenseCount: 0 };
+        payerTotal.amount += expense.amount;
+        payerTotal.expenseCount += 1;
+        payerTotals.set(expense.currency, payerTotal);
+        byPayer.set(expense.paidBy, payerTotals);
+      }
+      return HttpResponse.json({
+        totals: [...byCurrency].map(([currency, values]) => ({ currency, ...values })),
+        payers: [...byPayer].map(([paidBy, totals]) => ({
+          paidBy,
+          totals: [...totals].map(([currency, values]) => ({ currency, ...values })),
+        })),
+      });
+    }),
+    http.get(categoriesEndpoint, () =>
+      HttpResponse.json([
+        { id: 1, name: "food" },
+        { id: 2, name: "dining" },
+      ]),
+    ),
     http.post(endpoint, async ({ request }) => {
       const draft = (await request.json()) as ExpenseDraft;
       const now = "2026-10-15T10:00:00Z";
       const created: Expense = {
         ...draft,
         description: draft.description ?? null,
+        categoryName: draft.categoryId === 2 ? "dining" : "food",
         id: nextId++,
         createdAt: now,
         updatedAt: now,
@@ -43,6 +74,7 @@ function mockExpenseApi(seed: Expense[] = [sampleExpense]) {
       const updated: Expense = {
         ...draft,
         description: draft.description ?? null,
+        categoryName: draft.categoryId === 2 ? "dining" : "food",
         id,
         createdAt: existing.createdAt,
         updatedAt: "2026-10-15T10:00:00Z",
@@ -73,8 +105,8 @@ describe("DashboardPage expense workflows", () => {
     await user.clear(screen.getByLabelText("Amount"));
     await user.type(screen.getByLabelText("Amount"), "12.50");
     await user.selectOptions(screen.getByLabelText("Currency"), "AMD");
-    await user.clear(screen.getByLabelText("Category"));
-    await user.type(screen.getByLabelText("Category"), "Dining");
+    await screen.findByRole("option", { name: "dining" });
+    await user.selectOptions(screen.getByLabelText("Category"), "2");
     await user.selectOptions(screen.getByLabelText("Paid by"), "2");
     await user.click(screen.getByRole("button", { name: "Save expense" }));
 

@@ -10,7 +10,7 @@ export function emptyExpenseDraft(): ExpenseDraft {
     amount: 0,
     currency: "AMD",
     expenseDate: new Date().toISOString().slice(0, 10),
-    category: "",
+    categoryId: 0,
     notes: "",
     paidBy: 1,
   };

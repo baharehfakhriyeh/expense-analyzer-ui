@@ -5,6 +5,12 @@ import userEvent from "@testing-library/user-event";
 import ExpenseFormDialog from "./ExpenseFormDialog";
 import type { ExpenseDraft } from "../types/expense";
 import { sampleDraft } from "../../../test/fixtures";
+import type { Category } from "../../categories/types/category";
+
+const categories: Category[] = [
+  { id: 1, name: "food" },
+  { id: 2, name: "dining" },
+];
 
 function FormHarness({
   onSubmit,
@@ -16,6 +22,8 @@ function FormHarness({
     <ExpenseFormDialog
       mode="create"
       draft={draft}
+      categories={categories}
+      categoriesLoading={false}
       saving={false}
       onChange={setDraft}
       onClose={vi.fn()}
@@ -42,8 +50,7 @@ describe("ExpenseFormDialog", () => {
     await user.clear(screen.getByLabelText("Amount"));
     await user.type(screen.getByLabelText("Amount"), "12.50");
     await user.selectOptions(screen.getByLabelText("Currency"), "EUR");
-    await user.clear(screen.getByLabelText("Category"));
-    await user.type(screen.getByLabelText("Category"), "Dining");
+    await user.selectOptions(screen.getByLabelText("Category"), "2");
     await user.selectOptions(screen.getByLabelText("Paid by"), "2");
     await user.click(screen.getByRole("button", { name: "Save expense" }));
 
@@ -52,7 +59,7 @@ describe("ExpenseFormDialog", () => {
       description: "Coffee",
       amount: 12.5,
       currency: "EUR",
-      category: "Dining",
+      categoryId: 2,
       paidBy: 2,
     });
   });

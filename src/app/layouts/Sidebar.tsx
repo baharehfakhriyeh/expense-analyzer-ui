@@ -9,6 +9,7 @@ import {
   Wallet,
 } from "lucide-react";
 import { API_ORIGIN } from "../../shared/config/runtime";
+import { NavLink } from "react-router-dom";
 export default function Sidebar({
   transactionCount,
 }: {
@@ -35,19 +36,25 @@ export default function Sidebar({
       </div>
       <div className="nav-caption">WORKSPACE</div>
       <nav className="nav-list">
-        <a className="nav-item active" href="#dashboard">
+        <NavLink
+          className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
+          to="/dashboard"
+        >
           <LayoutDashboard size={18} />
           Dashboard
-        </a>
-        <a className="nav-item" href="#transactions">
+        </NavLink>
+        <NavLink className="nav-item" to="/dashboard#transactions">
           <CreditCard size={18} />
           Transactions
           <span className="nav-count">{transactionCount.toLocaleString()}</span>
-        </a>
-        <a className="nav-item" href="#categories">
+        </NavLink>
+        <NavLink
+          className={({ isActive }) => `nav-item${isActive ? " active" : ""}`}
+          to="/categories"
+        >
           <Tag size={18} />
           Categories
-        </a>
+        </NavLink>
       </nav>
       <div className="sidebar-bottom">
         <div className="help-card">

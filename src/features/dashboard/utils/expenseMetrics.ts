@@ -4,7 +4,7 @@ export function getExpenseMetrics(expenses: Expense[]) {
   const counts = new Map<string, number>();
   const totals = new Map<Currency, number>();
   for (const expense of expenses) {
-    counts.set(expense.category, (counts.get(expense.category) ?? 0) + 1);
+    counts.set(expense.categoryName, (counts.get(expense.categoryName) ?? 0) + 1);
     totals.set(
       expense.currency,
       (totals.get(expense.currency) ?? 0) + expense.amount,

@@ -133,7 +133,7 @@ export default function ExpenseTable({
                       <i
                         style={{ background: colors[index % colors.length] }}
                       />
-                      {expense.category}
+                      {expense.categoryName}
                     </span>
                   </td>
                   <td>

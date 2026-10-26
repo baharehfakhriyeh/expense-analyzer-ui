@@ -1,88 +1,61 @@
-import { Activity, CreditCard, Tag, TrendingUp, Wallet } from "lucide-react";
-import type { Currency, Expense } from "../types/expense";
+import { Activity, CreditCard, Wallet } from "lucide-react";
+import type { ExpenseSummary } from "../types/expense";
 import { formatMoney } from "../utils/formatters";
 interface Props {
-  expenses: Expense[];
-  totalElements: number;
+  summary: ExpenseSummary | null;
   loading: boolean;
-  currentTotal: Array<[Currency, number]>;
-  categoryCount: number;
-  topCategory?: [string, number];
+  hasError: boolean;
 }
 export default function ExpenseSummaryCards({
-  expenses,
-  totalElements,
+  summary,
   loading,
-  currentTotal,
-  categoryCount,
-  topCategory,
+  hasError,
 }: Props) {
+  const totalCount = summary?.totals.reduce((sum, total) => sum + total.expenseCount, 0) ?? 0;
   return (
-    <section className="summary-grid" aria-label="Expense overview">
-      <article className="summary-card highlight">
+    <section className="summary-dashboards" aria-label="Expense totals by date range">
+      <article className="summary-card highlight summary-overall-card">
         <div className="summary-top">
-          <span className="summary-label">SPENDING ON THIS PAGE</span>
+          <span className="summary-label">TOTAL EXPENSES</span>
           <span className="summary-icon violet">
             <Wallet size={18} />
           </span>
         </div>
-        <div className="summary-value multi-total">
-          {currentTotal.length ? (
-            currentTotal.map(([code, amount]) => (
-              <span key={code}>{formatMoney(amount, code)}</span>
+        <div className="summary-currency-totals">
+          {loading ? (
+            <span>Loading totals…</span>
+          ) : hasError ? (
+            <span>Totals unavailable</span>
+          ) : summary?.totals.length ? (
+            summary.totals.map((total) => (
+              <span key={total.currency}>{formatMoney(total.amount, total.currency)}</span>
             ))
           ) : (
-            <span>{loading ? "—" : "0"}</span>
+            <span>No expenses in this period</span>
           )}
         </div>
         <div className="summary-foot">
-          <span className="foot-pill">
-            <Activity size={13} /> {expenses.length} records
-          </span>
-          <span>current page only</span>
+          <span className="foot-pill"><Activity size={13} /> {loading ? "—" : totalCount} records</span>
+          <span>all matching expenses</span>
         </div>
       </article>
-      <article className="summary-card">
-        <div className="summary-top">
-          <span className="summary-label">ALL TRANSACTIONS</span>
-          <span className="summary-icon mint">
-            <CreditCard size={18} />
-          </span>
-        </div>
-        <div className="summary-value">
-          {loading ? "—" : totalElements.toLocaleString()}
-        </div>
-        <div className="summary-foot">
-          <span className="subtle-dot" />
-          Matching your filters
-        </div>
-      </article>
-      <article className="summary-card">
-        <div className="summary-top">
-          <span className="summary-label">CATEGORIES</span>
-          <span className="summary-icon peach">
-            <Tag size={18} />
-          </span>
-        </div>
-        <div className="summary-value">{loading ? "—" : categoryCount}</div>
-        <div className="summary-foot">On this page of transactions</div>
-      </article>
-      <article className="summary-card">
-        <div className="summary-top">
-          <span className="summary-label">MOST FREQUENT</span>
-          <span className="summary-icon blue">
-            <TrendingUp size={18} />
-          </span>
-        </div>
-        <div className="summary-value category-value">
-          {loading ? "—" : (topCategory?.[0] ?? "—")}
-        </div>
-        <div className="summary-foot">
-          {topCategory
-            ? topCategory[1] + " transactions on this page"
-            : "No category activity yet"}
-        </div>
-      </article>
+      {summary?.payers.map((payer) => (
+        <article className="summary-card payer-summary-card" key={payer.paidBy}>
+          <div className="summary-top">
+            <span className="summary-label">PAID BY USER {payer.paidBy}</span>
+            <span className="summary-icon mint"><CreditCard size={18} /></span>
+          </div>
+          <div className="summary-currency-totals">
+            {payer.totals.map((total) => (
+              <span key={total.currency}>{formatMoney(total.amount, total.currency)}</span>
+            ))}
+          </div>
+          <div className="summary-foot">
+            <span className="subtle-dot" />
+            {payer.totals.reduce((sum, total) => sum + total.expenseCount, 0)} expenses
+          </div>
+        </article>
+      ))}
     </section>
   );
 }

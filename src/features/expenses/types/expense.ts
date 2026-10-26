@@ -5,7 +5,8 @@ export interface Expense {
   amount: number;
   currency: Currency;
   expenseDate: string;
-  category: string;
+  categoryId: number;
+  categoryName: string;
   notes: string | null;
   paidBy: number;
   createdAt: string;
@@ -22,15 +23,28 @@ export interface ExpensePage {
   last: boolean;
   empty: boolean;
 }
+export interface CurrencyExpenseTotal {
+  currency: Currency;
+  amount: number;
+  expenseCount: number;
+}
+export interface PayerExpenseSummary {
+  paidBy: number;
+  totals: CurrencyExpenseTotal[];
+}
+export interface ExpenseSummary {
+  totals: CurrencyExpenseTotal[];
+  payers: PayerExpenseSummary[];
+}
 export interface ExpenseFilters {
   from: string;
   to: string;
-  category: string;
+  categoryId: string;
   paidBy: string;
 }
 export type ExpenseDraft = Omit<
   Expense,
-  "id" | "createdAt" | "updatedAt" | "description"
+  "id" | "createdAt" | "updatedAt" | "categoryName" | "description"
 > & {
   description?: string | null;
 };
