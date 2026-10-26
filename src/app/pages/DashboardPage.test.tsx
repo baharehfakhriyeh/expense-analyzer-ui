@@ -2,6 +2,7 @@ import { describe, expect, it, vi } from "vitest";
 import { http, HttpResponse } from "msw";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
 import DashboardPage from "./DashboardPage";
 import { server } from "../../test/server";
 import { expensePage, sampleExpense } from "../../test/fixtures";
@@ -96,7 +97,7 @@ describe("DashboardPage expense workflows", () => {
   it("creates an expense and reloads it into the table", async () => {
     mockExpenseApi();
     const user = userEvent.setup();
-    render(<DashboardPage />);
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>);
     expect(await screen.findByText("Weekly groceries")).toBeInTheDocument();
 
     await user.click(screen.getByRole("button", { name: "Add expense" }));
@@ -105,7 +106,7 @@ describe("DashboardPage expense workflows", () => {
     await user.clear(screen.getByLabelText("Amount"));
     await user.type(screen.getByLabelText("Amount"), "12.50");
     await user.selectOptions(screen.getByLabelText("Currency"), "AMD");
-    await screen.findByRole("option", { name: "dining" });
+    await screen.findByLabelText("Category");
     await user.selectOptions(screen.getByLabelText("Category"), "2");
     await user.selectOptions(screen.getByLabelText("Paid by"), "2");
     await user.click(screen.getByRole("button", { name: "Save expense" }));
@@ -119,13 +120,13 @@ describe("DashboardPage expense workflows", () => {
     expect(screen.getByLabelText("Amount")).toHaveValue(null);
     expect(screen.getByLabelText("Category")).toHaveValue("");
     expect(screen.getByLabelText("Currency")).toHaveValue("AMD");
-    expect(screen.getByLabelText("Paid by")).toHaveValue("1");
+    expect(screen.getByLabelText("Paid by")).toHaveValue("2");
   });
 
   it("updates an expense from the table", async () => {
     mockExpenseApi();
     const user = userEvent.setup();
-    render(<DashboardPage />);
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>);
     await screen.findByText("Weekly groceries");
 
     await user.click(
@@ -143,7 +144,7 @@ describe("DashboardPage expense workflows", () => {
     mockExpenseApi();
     vi.spyOn(window, "confirm").mockReturnValue(true);
     const user = userEvent.setup();
-    render(<DashboardPage />);
+    render(<MemoryRouter><DashboardPage /></MemoryRouter>);
     await screen.findByText("Weekly groceries");
 
     await user.click(

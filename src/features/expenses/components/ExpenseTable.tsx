@@ -119,9 +119,14 @@ export default function ExpenseTable({
                       >
                         {initials(expense.description)}
                       </span>
-                      <span>
+                      <span className="transaction-description">
                         <strong>{expense.description || "No description"}</strong>
-                        <small>#{expense.id.toString().padStart(4, "0")}</small>
+                        <span className="transaction-secondary">
+                          <small>#{expense.id.toString().padStart(4, "0")}</small>
+                          {expense.isPersonal && (
+                            <span className="personal-indicator">Personal</span>
+                          )}
+                        </span>
                       </span>
                     </div>
                   </td>

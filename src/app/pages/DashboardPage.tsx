@@ -88,6 +88,7 @@ export default function DashboardPage() {
       categoryId: expense.categoryId,
       notes: expense.notes ?? "",
       paidBy: expense.paidBy,
+      isPersonal: expense.isPersonal,
     });
     setModal(expense);
   }

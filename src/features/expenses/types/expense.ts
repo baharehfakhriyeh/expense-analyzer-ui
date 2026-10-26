@@ -9,6 +9,7 @@ export interface Expense {
   categoryName: string;
   notes: string | null;
   paidBy: number;
+  isPersonal: boolean;
   createdAt: string;
   updatedAt: string;
 }

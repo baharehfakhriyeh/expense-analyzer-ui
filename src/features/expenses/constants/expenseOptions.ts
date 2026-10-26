@@ -13,5 +13,6 @@ export function emptyExpenseDraft(): ExpenseDraft {
     categoryId: 0,
     notes: "",
     paidBy: 1,
+    isPersonal: false,
   };
 }

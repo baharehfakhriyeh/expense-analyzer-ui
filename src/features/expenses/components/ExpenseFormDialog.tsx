@@ -137,20 +137,34 @@ export default function ExpenseFormDialog({
               </select>
             </label>
           </div>
-          <label className="form-field full-field">
-            <span>Paid by</span>
-            <select
-              required
-              value={draft.paidBy}
-              onChange={(event) => update("paidBy", Number(event.target.value))}
-            >
-              {payers.map((person) => (
-                <option key={person.id} value={person.id}>
-                  {person.text}
-                </option>
-              ))}
-            </select>
-          </label>
+          <div className="form-grid personal-payer-grid">
+            <label className="personal-expense-toggle">
+              <input
+                type="checkbox"
+                aria-label="Personal expense"
+                checked={draft.isPersonal}
+                onChange={(event) => update("isPersonal", event.target.checked)}
+              />
+              <span>
+                <strong>Personal expense</strong>
+                <small>Not shared with others</small>
+              </span>
+            </label>
+            <label className="form-field">
+              <span>Paid by</span>
+              <select
+                required
+                value={draft.paidBy}
+                onChange={(event) => update("paidBy", Number(event.target.value))}
+              >
+                {payers.map((person) => (
+                  <option key={person.id} value={person.id}>
+                    {person.text}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
           <label className="form-field full-field">
             <span>Description</span>
             <input

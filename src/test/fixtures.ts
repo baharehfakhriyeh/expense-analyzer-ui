@@ -14,6 +14,7 @@ export const sampleExpense: Expense = {
   categoryName: "food",
   notes: "Weekly shop",
   paidBy: 1,
+  isPersonal: false,
   createdAt: "2026-10-04T12:30:45Z",
   updatedAt: "2026-10-04T12:30:45Z",
 };
@@ -26,6 +27,7 @@ export const sampleDraft: ExpenseDraft = {
   categoryId: 1,
   notes: "Weekly shop",
   paidBy: 1,
+  isPersonal: false,
 };
 
 export function expensePage(content: Expense[] = [sampleExpense]): ExpensePage {

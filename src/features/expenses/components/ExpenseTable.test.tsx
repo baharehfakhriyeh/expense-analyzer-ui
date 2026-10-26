@@ -52,10 +52,11 @@ describe("ExpenseTable", () => {
     const onDelete = vi.fn();
     const onSortChange = vi.fn();
     const onPageChange = vi.fn();
+    const personalExpense = { ...sampleExpense, isPersonal: true };
     render(
       <ExpenseTable
         page={{ ...expensePage(), first: true, last: false, totalPages: 2 }}
-        expenses={[sampleExpense]}
+        expenses={[personalExpense]}
         loading={false}
         pageIndex={0}
         sort="expenseDate,desc"
@@ -69,6 +70,7 @@ describe("ExpenseTable", () => {
 
     expect(screen.getByText("Weekly groceries")).toBeInTheDocument();
     expect(screen.getByText("food")).toBeInTheDocument();
+    expect(screen.getByText("Personal")).toBeInTheDocument();
     await user.click(
       screen.getByRole("button", { name: "Edit Weekly groceries" }),
     );
@@ -78,8 +80,8 @@ describe("ExpenseTable", () => {
     await user.click(screen.getByRole("button", { name: /AMOUNT/ }));
     await user.click(screen.getByRole("button", { name: "Next page" }));
 
-    expect(onEdit).toHaveBeenCalledWith(sampleExpense);
-    expect(onDelete).toHaveBeenCalledWith(sampleExpense);
+    expect(onEdit).toHaveBeenCalledWith(personalExpense);
+    expect(onDelete).toHaveBeenCalledWith(personalExpense);
     expect(onSortChange).toHaveBeenCalledWith("amount,desc");
     expect(onPageChange).toHaveBeenCalledWith(1);
   });

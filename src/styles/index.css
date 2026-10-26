@@ -1079,6 +1079,24 @@ tbody tr:last-child td {
   color: #aaa9b5;
   margin-top: 3px;
 }
+.transaction-secondary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.transaction-secondary small {
+  margin-top: 3px;
+}
+.personal-indicator {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 5px;
+  padding: 2px 5px;
+  background: #fff4e8;
+  color: #a7651c;
+  font-size: 8px;
+  font-weight: 600;
+}
 .date-cell {
   color: #797886;
 }
@@ -1314,6 +1332,9 @@ tbody tr:last-child td {
   grid-template-columns: 1fr 1fr;
   gap: 12px;
 }
+.personal-payer-grid {
+  align-items: end;
+}
 .form-field {
   display: grid;
   gap: 6px;
@@ -1341,6 +1362,37 @@ tbody tr:last-child td {
   padding: 9px 10px;
   outline: none;
   font-size: 11px;
+  font-weight: 400;
+}
+.personal-expense-toggle {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  min-height: 37px;
+  box-sizing: border-box;
+  padding: 9px 11px;
+  border: 1px solid #eceaf5;
+  border-radius: 9px;
+  background: #fbfaff;
+  cursor: pointer;
+}
+.personal-expense-toggle input {
+  width: 15px;
+  height: 15px;
+  accent-color: #7163dc;
+}
+.personal-expense-toggle > span {
+  display: grid;
+  gap: 3px;
+}
+.personal-expense-toggle strong {
+  color: #555464;
+  font-size: 10px;
+}
+.personal-expense-toggle small {
+  color: #91909e;
+  font-size: 9px;
   font-weight: 400;
 }
 .form-field input,

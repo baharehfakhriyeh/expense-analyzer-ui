@@ -37,7 +37,17 @@ describe("ExpenseFormDialog", () => {
     render(<FormHarness onSubmit={vi.fn()} />);
     expect(
       screen.getAllByRole("option").map((option) => option.textContent),
-    ).toEqual(["AMD", "USD", "EUR", "IRR", "User1", "User2"]);
+    ).toEqual([
+      "Choose a category",
+      "dining",
+      "food",
+      "AMD",
+      "USD",
+      "EUR",
+      "IRR",
+      "User1",
+      "User2",
+    ]);
   });
 
   it("submits the entered expense fields", async () => {
@@ -52,6 +62,7 @@ describe("ExpenseFormDialog", () => {
     await user.selectOptions(screen.getByLabelText("Currency"), "EUR");
     await user.selectOptions(screen.getByLabelText("Category"), "2");
     await user.selectOptions(screen.getByLabelText("Paid by"), "2");
+    await user.click(screen.getByLabelText("Personal expense"));
     await user.click(screen.getByRole("button", { name: "Save expense" }));
 
     expect(onSubmit).toHaveBeenCalledWith({
@@ -61,6 +72,7 @@ describe("ExpenseFormDialog", () => {
       currency: "EUR",
       categoryId: 2,
       paidBy: 2,
+      isPersonal: true,
     });
   });
 
@@ -70,5 +82,18 @@ describe("ExpenseFormDialog", () => {
     expect(screen.getByLabelText("Amount")).toBeRequired();
     expect(screen.getByLabelText("Date")).toBeRequired();
     expect(screen.getByLabelText("Category")).toBeRequired();
+    expect(screen.getByLabelText("Personal expense")).not.toBeRequired();
+    expect(screen.getByLabelText("Personal expense")).not.toBeChecked();
+  });
+
+  it("places the personal expense control before Paid by in the same row", () => {
+    render(<FormHarness onSubmit={vi.fn()} />);
+    const personalExpense = screen.getByLabelText("Personal expense");
+    const paidBy = screen.getByLabelText("Paid by");
+    const row = personalExpense.closest(".personal-payer-grid");
+
+    expect(row).not.toBeNull();
+    expect(row).toContainElement(paidBy);
+    expect(personalExpense.compareDocumentPosition(paidBy) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 });
