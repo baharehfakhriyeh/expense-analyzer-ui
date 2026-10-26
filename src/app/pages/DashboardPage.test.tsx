@@ -22,24 +22,49 @@ function mockExpenseApi(seed: Expense[] = [sampleExpense]) {
     http.get(endpoint, () => HttpResponse.json(expensePage(records))),
     http.get(endpoint + "/summary", () => {
       const byCurrency = new Map<string, { amount: number; expenseCount: number }>();
-      const byPayer = new Map<number, Map<string, { amount: number; expenseCount: number }>>();
+      const sharedByCurrency = new Map<string, { amount: number; expenseCount: number }>();
+      const personalByCurrency = new Map<string, { amount: number; expenseCount: number }>();
+      const byPayer = new Map<number, {
+        totals: Map<string, { amount: number; expenseCount: number }>;
+        sharedTotals: Map<string, { amount: number; expenseCount: number }>;
+        personalTotals: Map<string, { amount: number; expenseCount: number }>;
+      }>();
       for (const expense of records) {
         const total = byCurrency.get(expense.currency) ?? { amount: 0, expenseCount: 0 };
         total.amount += expense.amount;
         total.expenseCount += 1;
         byCurrency.set(expense.currency, total);
-        const payerTotals = byPayer.get(expense.paidBy) ?? new Map();
-        const payerTotal = payerTotals.get(expense.currency) ?? { amount: 0, expenseCount: 0 };
+        const bucketTotals = expense.isPersonal ? personalByCurrency : sharedByCurrency;
+        const bucketTotal = bucketTotals.get(expense.currency) ?? { amount: 0, expenseCount: 0 };
+        bucketTotal.amount += expense.amount;
+        bucketTotal.expenseCount += 1;
+        bucketTotals.set(expense.currency, bucketTotal);
+
+        const payer = byPayer.get(expense.paidBy) ?? {
+          totals: new Map(),
+          sharedTotals: new Map(),
+          personalTotals: new Map(),
+        };
+        const payerTotal = payer.totals.get(expense.currency) ?? { amount: 0, expenseCount: 0 };
         payerTotal.amount += expense.amount;
         payerTotal.expenseCount += 1;
-        payerTotals.set(expense.currency, payerTotal);
-        byPayer.set(expense.paidBy, payerTotals);
+        payer.totals.set(expense.currency, payerTotal);
+        const payerBucket = expense.isPersonal ? payer.personalTotals : payer.sharedTotals;
+        const payerBucketTotal = payerBucket.get(expense.currency) ?? { amount: 0, expenseCount: 0 };
+        payerBucketTotal.amount += expense.amount;
+        payerBucketTotal.expenseCount += 1;
+        payerBucket.set(expense.currency, payerBucketTotal);
+        byPayer.set(expense.paidBy, payer);
       }
       return HttpResponse.json({
         totals: [...byCurrency].map(([currency, values]) => ({ currency, ...values })),
-        payers: [...byPayer].map(([paidBy, totals]) => ({
+        sharedTotals: [...sharedByCurrency].map(([currency, values]) => ({ currency, ...values })),
+        personalTotals: [...personalByCurrency].map(([currency, values]) => ({ currency, ...values })),
+        payers: [...byPayer].map(([paidBy, payer]) => ({
           paidBy,
-          totals: [...totals].map(([currency, values]) => ({ currency, ...values })),
+          totals: [...payer.totals].map(([currency, values]) => ({ currency, ...values })),
+          sharedTotals: [...payer.sharedTotals].map(([currency, values]) => ({ currency, ...values })),
+          personalTotals: [...payer.personalTotals].map(([currency, values]) => ({ currency, ...values })),
         })),
       });
     }),

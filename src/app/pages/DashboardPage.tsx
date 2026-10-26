@@ -19,6 +19,7 @@ import { emptyExpenseDraft } from "../../features/expenses/constants/expenseOpti
 import { getExpenseMetrics } from "../../features/dashboard/utils/expenseMetrics";
 import CategorySnapshotCard from "../../features/dashboard/components/CategorySnapshotCard";
 import QuickActionsCard from "../../features/dashboard/components/QuickActionsCard";
+import ExpenseComparisonChart from "../../features/dashboard/components/ExpenseComparisonChart";
 import ErrorBanner from "../../shared/components/feedback/ErrorBanner";
 import Toast from "../../shared/components/feedback/Toast";
 import { listCategories } from "../../features/categories/api/categoriesApi";
@@ -235,6 +236,11 @@ export default function DashboardPage() {
             expensesCount={expenses.length}
             categoryCounts={categoryCounts}
             loading={loading}
+          />
+          <ExpenseComparisonChart
+            summary={summary}
+            loading={summaryLoading}
+            hasError={Boolean(summaryError)}
           />
           <QuickActionsCard
             onAddExpense={openNew}

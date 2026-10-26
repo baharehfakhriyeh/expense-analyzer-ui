@@ -32,9 +32,13 @@ export interface CurrencyExpenseTotal {
 export interface PayerExpenseSummary {
   paidBy: number;
   totals: CurrencyExpenseTotal[];
+  sharedTotals: CurrencyExpenseTotal[];
+  personalTotals: CurrencyExpenseTotal[];
 }
 export interface ExpenseSummary {
   totals: CurrencyExpenseTotal[];
+  sharedTotals: CurrencyExpenseTotal[];
+  personalTotals: CurrencyExpenseTotal[];
   payers: PayerExpenseSummary[];
 }
 export interface ExpenseFilters {
